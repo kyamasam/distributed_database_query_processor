@@ -1,0 +1,19 @@
+<!Doctype html>
+{% load static %}
+<html lang="en">
+<html>
+    <form method="post" action="">
+        {% csrf_token %}
+        <label for="projection">SELECT</label>
+        <input type="text" name="projection">
+        <br>
+        <label for="cartesian_product">FROM</label>
+        <input type="text" name="cartesian_product">
+        <br>
+        <label for="selection">WHERE</label>
+        <input type="text" name='selection'>
+        <br>
+        <input type="submit" value="EXECUTE">
+
+    </form>
+</html>

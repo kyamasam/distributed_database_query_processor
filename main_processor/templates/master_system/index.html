@@ -1,0 +1,320 @@
+<!Doctype html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Samuel Kyama & Samson Muoki">
+    <link rel="stylesheet" href="{% static 'master_system/css/bootstrap.css' %}"/>
+    <link rel="stylesheet" href="{% static 'master_system/css/dashboard.css' %}"/>
+    <link rel="stylesheet" href="{% static 'master_system/plugins/chosen/chosen.css' %}"/>
+    {#    <script src="https://cdn.jsdelivr.net/npm/vue"></script>#}
+</head>
+<body>
+<nav class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+    <a class="navbar-brand col-md-3 col-lg-2 mr-0 px-3" href="#">Master Controller</a>
+    <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-toggle="collapse"
+            data-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    <input class="form-control form-control-dark w-100" type="text" placeholder="Search" aria-label="Search">
+    <ul class="navbar-nav px-3">
+        <li class="nav-item text-nowrap">
+            <a class="nav-link" href="#">Sign out</a>
+        </li>
+    </ul>
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+            <div class="sidebar-sticky pt-3">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="feather feather-home">
+                                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                                <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                            </svg>
+                            Home <span class="sr-only">(current)</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                                 fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                 stroke-linejoin="round" class="feather feather-file">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                                <polyline points="13 2 13 9 20 9"></polyline>
+                            </svg>
+                            Config
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-md-4">
+            <div class="chartjs-size-monitor"
+                 style="position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; overflow: hidden; pointer-events: none; visibility: hidden; z-index: -1;">
+                <div class="chartjs-size-monitor-expand"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:1000000px;height:1000000px;left:0;top:0"></div>
+                </div>
+                <div class="chartjs-size-monitor-shrink"
+                     style="position:absolute;left:0;top:0;right:0;bottom:0;overflow:hidden;pointer-events:none;visibility:hidden;z-index:-1;">
+                    <div style="position:absolute;width:200%;height:200%;left:0; top:0"></div>
+                </div>
+            </div>
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Queries</h1>
+                <div class="btn-toolbar mb-2 mb-md-0">
+                </div>
+            </div>
+            {% if form.errors %}
+                {% for field in form %}
+                    {% for error in field.errors %}
+                        <div class="alert alert-danger">
+                            <strong>{{ error|escape }}</strong>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+                {% for error in form.non_field_errors %}
+                    <div class="alert alert-danger">
+                        <strong>{{ error|escape }}</strong>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            {#            {{ projection }}#}
+            {#            {{ cartesian_product }}#}
+            {#            {{ selection }}#}
+            {#            {{ get_url }}#}
+            <div class="jumbotron p-4 " style="background: #f4f4f4">
+                <form action="/" method="post">
+
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h3>Input Query</h3>
+                            <hr class="my-4">
+                            <div class="card">
+
+                                <div class="card-body">
+                                    <div class="p-2">
+                                        <div class="form-group row">
+                                            <label for="projection" class="col-sm-2 col-form-label">SELECT</label>
+                                            <div class="col-sm-10">
+
+                                                <select name="projection" id="projection" data-placeholder="columns"
+                                                        class="form-control chosen-select " multiple tabindex="7">
+                                                    <option value=""></option>
+                                                    {% for col in columns_list %}
+                                                        <optgroup label="{{ col.table_name }}">
+
+                                                            {% for col_name in col.columns_as_array %}
+                                                                <option value="{{ col_name }}">{{ col_name }}</option>
+                                                            {% endfor %}
+
+                                                        </optgroup>
+                                                    {% endfor %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class=" p-2">
+                                        <div class="form-group row">
+                                            <label for="cartesian_product" class="col-sm-2 col-form-label">FROM
+
+                                            </label>
+                                            <div class="col-sm-10">
+                                                <select name="cartesian_product" id="cartesian_product"
+                                                        data-placeholder="tables"
+                                                        class="form-control chosen-select " tabindex="7">
+                                                    <option value=""></option>
+                                                    {% for table in tables_list %}
+                                                        <option value="{{ table.table_name }}"
+                                                                selected>{{ table.table_name }}</option>
+                                                    {% endfor %}
+
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class=" p-2">
+                                        <div class="form-group row">
+                                            <label for="selection" class="col-sm-2 col-form-label">WHERE</label>
+                                            <div class="col-sm-10">
+                                                <input name="selection" id="selection" data-placeholder="condition"
+                                                       class="form-control"/>
+
+                                                <p class="pt-4"> Options</p>
+                                                {% for col in columns_list %}
+                                                    {% for col_name in col.columns_as_array %}
+                                                        <code class="p-2 ">{{ col.table_name }}.{{ col_name }} , </code>
+                                                    {% endfor %}
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h3>Query Preview</h3>
+                            <hr class="my-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <p><code>SELECT </code><code id="projection_output"> name, hostel </code></p>
+                                    <p><code>FROM </code><code id="cartesian_product_output"> students </code></p>
+                                    <p><code>WHERE </code><code id="selection_output"> hostel="Nairobi"</code></p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <br>
+                            <input type="submit" class="btn btn-info" value="Submit">
+                        </div>
+                    </div>
+                </form>
+                <br>
+            </div>
+            <div class="jumbotron" style="background: #f4f4f4">
+                <h3>Results</h3>
+                <hr class="my-4">
+                <div class="row">
+                    <table class="table" id="results_table">
+                        <thead class="thead-dark" id="results_table_head">
+                        <tr>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="jumbotron" style="background: #f4f4f4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h3>User Query</h3>
+                        <hr class="my-4">
+                        <p class="m-3">Query</p>
+                        <div class="card">
+
+                            <div class="card-body">
+                                <p><code>{{ initial_user_query }} </code></p>
+
+                            </div>
+                        </div>
+                        <p class="m-3">Url</p>
+                        <div class="card">
+
+                            <div class="card-body">
+                                <p><code id="get_url">{{ get_url }} </code></p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h3>Actual Query Executed</h3>
+                        <hr class="my-4">
+                        <div class="card">
+                            <div class="card-body" id="actual_query">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+</div>
+</body>
+
+<script src="{% static 'master_system/js/jquery.js' %}"></script>
+<script src="{% static 'master_system/js/jquery.min.js' %}"></script>
+<script src="{% static 'master_system/plugins/chosen/chosen.jquery.js' %}"></script>
+<script src="{% static 'master_system/js/bootstrap.js' %}"></script>
+
+<script>
+    $(function () {
+        $(".chosen-select").chosen();
+        $("#selection").trigger("chosen:updated");
+
+    });
+    $(document).ready(function () {
+        /* when the browser loads*/
+
+        // Print entered value in a div box
+        $("#projection_output").text($("#projection").val());
+        // Print entered value in a div box
+        $("#cartesian_product_output").text($("#cartesian_product").val());
+        // Print entered value in a div box
+        $("#selection_output").text($("#selection").val());
+
+        $("#projection").on("input", function () {
+            // Print entered value in a div box
+            $("#projection_output").text($(this).val());
+        });
+        $("#cartesian_product").on("input", function () {
+            // Print entered value in a div box
+            $("#cartesian_product_output").text($(this).val());
+        });
+        $("#selection").on("input", function () {
+            // Print entered value in a div box
+            $("#selection_output").text($(this).val());
+        });
+    });
+</script>
+{% csrf_token %}
+<script type="text/javascript">
+    /* get value of url*/
+    //remove &quote
+    get_url_value = "{{ get_url|safe }}"
+    console.log(get_url_value)
+    if (get_url_value === '') {
+
+    } else {
+        /* make get request */
+        $.get(get_url_value, function (data, status) {
+            console.log("Data: " + data[0].length + "\nStatus: " + status);
+            console.log("Data: " + data[1][0] + "\nStatus: " + status);
+            console.log("vale: " + data[data.length-1] + "\nStatus: " + status);
+
+            // skip the first column
+            for (i = 1; i < data.length-1; i++) {
+                // use data[0].length to loop through the length of the no. of columns
+                $tr = $('<tr>')
+                $th = $('<tr>')
+                for (j = 0; j < data[0].length; j++) {
+                    if (i === 1) {
+                        $th.append($('<th>').text(data[0][j]))
+                    } else {
+                    }
+                    $tr.append($('<td>').text(data[i][j]))
+                }
+                $tr.appendTo("#results_table")
+                $th.appendTo("#results_table_head")
+
+            }
+            $("<code>").text(data[data.length-1]).appendTo("#actual_query")
+
+            /*$(function() {
+                $.each(data, function(i, item) {
+                    var $tr = $('<tr>').append(
+                        $('<td>').text(item.REGNO),
+                    ); //.appendTo('#records_table');
+                    console.log($tr.wrap('<p>').html());
+                });
+            });*/
+        });
+    }
+
+</script>
+</html>
