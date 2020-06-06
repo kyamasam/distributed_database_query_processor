@@ -33,9 +33,10 @@ def homeview(request):
 
             print("child table", child)
 
+
             initial_user_query = "SELECT " + projection_list + " FROM " + child_table_name + " WHERE " + selection
 
-            if selection == '_':
+            if parent.fragmentation_type != 'horizontal':
                 get_url = "http://127.0.0.1:5000/?projection=SELECT " + projection_list + "&cartesian_product= FROM " \
                           + child_table_name + "&selection= " + "&target_database="\
                           + child.database_name

@@ -1,0 +1,18 @@
+//dept projects
+id, project_name, department
+departments_projects='departments_projects'
+
+//proj supervision
+id,regno,supervisor
+
+project_supervision=project_supervision
+
+
+//fragment fee kabete
+
+student.regno.campus="KABETE"
+
+//fragment fee chiromo
+
+student.regno.campus="CHIROMO"
+
